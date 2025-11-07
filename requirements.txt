@@ -1,2 +1,7 @@
+# Runtime dependencies
 pyautogui>=0.9.53
 schedule>=1.1.0
+
+# Build dependencies (optional, for creating distributable app)
+py2app>=0.28; sys_platform == 'darwin'
+pyinstaller>=5.0

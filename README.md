@@ -287,6 +287,222 @@ pyinstaller --onefile --windowed --name "AutoClickerPro" mdclick3.py
 
 ---
 
+## 📦 Building & Distributing (For Developers)
+
+Want to create a shareable app for your friends? Follow these steps!
+
+### Quick Build (One Command)
+
+```bash
+# Build everything at once!
+./build_installer.sh
+```
+
+This will:
+1. ✅ Build the .app bundle
+2. ✅ Create a DMG installer
+3. ✅ Ready to share!
+
+### Detailed Build Steps
+
+#### Method 1: Using py2app (Recommended)
+
+```bash
+# 1. Install build dependencies
+pip3 install py2app
+
+# 2. Build the application
+./build_app.sh
+
+# 3. Create DMG installer
+./create_dmg.sh
+```
+
+**Result**: `AutoMouseClickerPro-v2.0.dmg` ready to share!
+
+#### Method 2: Using PyInstaller (Alternative)
+
+If py2app doesn't work:
+
+```bash
+# 1. Install PyInstaller
+pip3 install pyinstaller
+
+# 2. Build with PyInstaller
+./build_with_pyinstaller.sh
+
+# 3. Create DMG
+./create_dmg.sh
+```
+
+### What Gets Created
+
+After building, you'll have:
+
+```
+📁 Your Project
+├── 📦 dist/
+│   └── Auto Mouse Clicker Pro.app  ← The application
+├── 💿 AutoMouseClickerPro-v2.0.dmg  ← Shareable installer
+└── 🏗️ build/ (temporary build files)
+```
+
+### Adding a Custom Icon (Optional)
+
+1. Create or download a 1024x1024 PNG icon
+2. Convert to .icns format:
+   ```bash
+   # Create iconset
+   mkdir MyIcon.iconset
+   sips -z 16 16 icon.png --out MyIcon.iconset/icon_16x16.png
+   sips -z 32 32 icon.png --out MyIcon.iconset/icon_16x16@2x.png
+   sips -z 32 32 icon.png --out MyIcon.iconset/icon_32x32.png
+   sips -z 64 64 icon.png --out MyIcon.iconset/icon_32x32@2x.png
+   sips -z 128 128 icon.png --out MyIcon.iconset/icon_128x128.png
+   sips -z 256 256 icon.png --out MyIcon.iconset/icon_128x128@2x.png
+   sips -z 256 256 icon.png --out MyIcon.iconset/icon_256x256.png
+   sips -z 512 512 icon.png --out MyIcon.iconset/icon_256x256@2x.png
+   sips -z 512 512 icon.png --out MyIcon.iconset/icon_512x512.png
+   sips -z 1024 1024 icon.png --out MyIcon.iconset/icon_512x512@2x.png
+
+   # Convert to icns
+   iconutil -c icns MyIcon.iconset -o AppIcon.icns
+   ```
+3. Place `AppIcon.icns` in the project root
+4. Run build script again
+
+### Code Signing (Optional but Recommended)
+
+To remove "unidentified developer" warnings:
+
+1. **Enroll in Apple Developer Program** ($99/year)
+2. **Get Developer ID Certificate**:
+   - Open Xcode > Preferences > Accounts
+   - Add your Apple ID
+   - Download "Developer ID Application" certificate
+
+3. **Sign the app** (automatic in build script):
+   ```bash
+   codesign --force --deep --sign "Developer ID Application: Your Name" \
+     "dist/Auto Mouse Clicker Pro.app"
+   ```
+
+4. **Notarize with Apple** (for macOS 10.15+):
+   ```bash
+   # Upload for notarization
+   xcrun notarytool submit AutoMouseClickerPro-v2.0.dmg \
+     --apple-id "your@email.com" \
+     --password "app-specific-password" \
+     --team-id "YOUR_TEAM_ID" \
+     --wait
+
+   # Staple notarization ticket
+   xcrun stapler staple AutoMouseClickerPro-v2.0.dmg
+   ```
+
+**Note**: Without signing, users must right-click > Open (first time only).
+
+### Sharing Your App
+
+#### Option 1: Direct Distribution
+
+1. Upload `AutoMouseClickerPro-v2.0.dmg` to:
+   - Google Drive
+   - Dropbox
+   - GitHub Releases
+   - Your website
+
+2. Share the download link with friends!
+
+#### Option 2: GitHub Release
+
+```bash
+# Create a release on GitHub
+gh release create v2.0 \
+  AutoMouseClickerPro-v2.0.dmg \
+  --title "Auto Mouse Clicker Pro v2.0" \
+  --notes "See CHANGELOG.md for details"
+```
+
+### Installation Instructions for Friends
+
+Send these instructions to your friends:
+
+```
+🎉 HOW TO INSTALL:
+
+1. Download AutoMouseClickerPro-v2.0.dmg
+2. Double-click the DMG file to mount it
+3. Drag "Auto Mouse Clicker Pro" to Applications folder
+4. Eject the DMG
+5. Open Applications folder
+6. Right-click "Auto Mouse Clicker Pro" → Open
+7. Click "Open" in security dialog
+8. Follow on-screen instructions for accessibility permissions
+
+Done! The app is now ready to use.
+```
+
+### Build Troubleshooting
+
+**Problem**: `py2app` fails with import errors
+
+**Solution**: Use PyInstaller instead:
+```bash
+./build_with_pyinstaller.sh
+```
+
+---
+
+**Problem**: App is too large (>100MB)
+
+**Solution**: Exclude unnecessary packages:
+- Edit `setup.py` → add to `excludes` list
+- Common exclusions: matplotlib, numpy, pandas, scipy
+
+---
+
+**Problem**: App crashes on other Macs
+
+**Solution**:
+1. Test on multiple macOS versions
+2. Check minimum OS version in setup.py (currently 10.14+)
+3. Ensure all dependencies are included
+
+---
+
+**Problem**: "Unidentified Developer" warning
+
+**Solution**: Either:
+- Tell users to right-click > Open (works without signing)
+- Or get Apple Developer certificate and sign the app
+
+---
+
+### Build Requirements
+
+- **macOS 10.14+** (for building)
+- **Python 3.7+**
+- **Xcode Command Line Tools**: `xcode-select --install`
+- **py2app** or **PyInstaller**
+
+### Testing Your Build
+
+Before sharing:
+
+```bash
+# Test the app
+open "dist/Auto Mouse Clicker Pro.app"
+
+# Test the DMG
+open AutoMouseClickerPro-v2.0.dmg
+
+# Check app info
+codesign -dv "dist/Auto Mouse Clicker Pro.app"
+```
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Here's how:
