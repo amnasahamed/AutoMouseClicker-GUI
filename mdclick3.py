@@ -243,9 +243,6 @@ class AutoMouseClicker:
         self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.listbox.yview)
 
-        # Populate existing locations
-        self._refresh_location_list()
-
         # Buttons
         button_frame = tk.Frame(parent, bg="#FFFFFF")
         button_frame.pack(pady=10, fill=tk.X, padx=10)
@@ -266,11 +263,14 @@ class AutoMouseClicker:
                  bg="#FF9500", fg="white", relief="flat",
                  command=self.clear_all_locations).pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
 
-        # Info label
+        # Info label (create before refresh to avoid AttributeError)
         self.location_info = tk.Label(parent,
                                      text=f"Locations: {len(self.locations)}/{MAX_LOCATIONS}",
                                      font=("SF Pro", 10), bg="#FFFFFF", fg="#8E8E93")
         self.location_info.pack(pady=5)
+
+        # Populate existing locations (must be after location_info is created)
+        self._refresh_location_list()
 
     def _build_log_tab(self, parent: tk.Frame) -> None:
         """Build the execution history/log tab."""
