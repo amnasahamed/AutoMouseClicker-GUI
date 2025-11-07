@@ -30,7 +30,16 @@ OPTIONS = {
     },
     'packages': ['tkinter', 'pyautogui', 'schedule'],
     'includes': ['json', 'os', 'time', 'threading', 'datetime', 'pathlib'],
-    'excludes': ['matplotlib', 'numpy', 'pandas', 'scipy'],  # Exclude unnecessary packages
+    'excludes': [
+        'matplotlib', 'numpy', 'pandas', 'scipy',  # Heavy packages
+        'IPython', 'jupyter', 'notebook',  # Jupyter
+        'pytest', 'test', 'tests',  # Testing
+        'sphinx', 'docutils',  # Documentation
+        'PIL.ImageQt', 'PIL.ImageTk',  # Unused PIL modules
+        'black', 'pylsp',  # Development tools
+        'multiprocessing', 'concurrent.futures',  # Not needed
+        'rubicon',  # Problematic dependency
+    ],
     'optimize': 2,  # Optimize bytecode
 }
 
